@@ -21,6 +21,10 @@ See the [tutorial][5] which provides a quick-start guide for users of the Oracle
 
 ## Features
 
+Differences for this forked version with the [original project][6]
+
+- With options to add Init Containers and Sidecar Containers
+
 The MySQL Operator provides the following core features:
 
 - Create and delete highly available MySQL clusters in Kubernetes with minimal effort
@@ -54,3 +58,4 @@ See [LICENSE](LICENSE) for more details.
 [3]: https://dev.mysql.com/doc/refman/5.7/en/mysql-innodb-cluster-userguide.html
 [4]: https://dev.mysql.com/doc/refman/5.7/en/group-replication.html
 [5]: docs/tutorial.md
+[6]: https://github.com/oracle/mysql-operator

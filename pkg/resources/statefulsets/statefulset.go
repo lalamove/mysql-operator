@@ -391,6 +391,7 @@ func NewForCluster(cluster *v1alpha1.Cluster, images operatoropts.Images, servic
 
 	if cluster.Spec.SidecarContainers != nil && len(*cluster.Spec.SidecarContainers) > 0 {
 		containers = append(containers, *cluster.Spec.SidecarContainers...)
+		cluster.RunningSpec.SidecarContainers = cluster.Spec.SidecarContainers
 	}
 
 	podLabels := map[string]string{

@@ -420,6 +420,19 @@ func (m *MySQLController) syncHandler(key string) error {
 		}
 	}
 
+	// If the sidecarContainers updated, we should update the StatefulSet resource.
+	if cluster.Spec.SidecarContainers != cluster.RunningSpec.SidecarContainers {
+		glog.V(4).Infof("Updating %q: SidecarContainers updated",
+			nsName)
+		old := ss.DeepCopy()
+		ss = statefulsets.NewForCluster(cluster, m.opConfig.Images, svc.Name)
+		if err := m.statefulSetControl.Patch(old, ss); err != nil {
+			// Requeue the item so we can attempt processing again later.
+			// This could have been caused by a temporary network failure etc.
+			return err
+		}
+	}
+
 	// Finally, we update the status block of the Cluster resource to
 	// reflect the current state of the world.
 	err = m.updateClusterStatus(cluster, ss)

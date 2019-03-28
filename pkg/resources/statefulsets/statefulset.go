@@ -391,7 +391,6 @@ func NewForCluster(cluster *v1alpha1.Cluster, images operatoropts.Images, servic
 
 	if cluster.Spec.SidecarContainers != nil && len(*cluster.Spec.SidecarContainers) > 0 {
 		containers = append(containers, *cluster.Spec.SidecarContainers...)
-		cluster.RunningSpec.SidecarContainers = cluster.Spec.SidecarContainers
 	}
 
 	podLabels := map[string]string{
@@ -462,4 +461,20 @@ func NewForCluster(cluster *v1alpha1.Cluster, images operatoropts.Images, servic
 		ss.Spec.Template.Spec.Tolerations = *cluster.Spec.Tolerations
 	}
 	return ss
+}
+
+// ParseContainers parse the containers object by the given cluster
+func ParseContainers(cluster *v1alpha1.Cluster, images operatoropts.Images, serviceName string) *[]v1.Container {
+	rootPassword := mysqlRootPassword(cluster)
+	members := int(cluster.Spec.Members)
+	baseServerID := cluster.Spec.BaseServerID
+
+	parsedcontainers := []v1.Container{
+		mysqlServerContainer(cluster, cluster.Spec.Repository, rootPassword, members, baseServerID),
+		mysqlAgentContainer(cluster, images.MySQLAgentImage, rootPassword, members)}
+
+	if cluster.Spec.SidecarContainers != nil && len(*cluster.Spec.SidecarContainers) > 0 {
+		parsedcontainers = append(parsedcontainers, *cluster.Spec.SidecarContainers...)
+	}
+	return &parsedcontainers
 }

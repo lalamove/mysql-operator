@@ -421,7 +421,7 @@ func (m *MySQLController) syncHandler(key string) error {
 	}
 
 	// If the sidecarContainers updated, we should update the StatefulSet resource.
-	if cluster.Spec.SidecarContainers != cluster.RunningSpec.SidecarContainers {
+	if statefulsets.ParseContainers(cluster, m.opConfig.Images, svc.Name) != &ss.Spec.Template.Spec.Containers {
 		glog.V(4).Infof("Updating %q: SidecarContainers updated",
 			nsName)
 		old := ss.DeepCopy()
